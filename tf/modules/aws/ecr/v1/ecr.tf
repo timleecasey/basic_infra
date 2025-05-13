@@ -20,35 +20,43 @@ resource "aws_ecr_repository" "repo" {
 
 resource "aws_ecr_repository_policy" "repo_policy" {
   repository = aws_ecr_repository.repo.name
-  policy     = data.aws_iam_policy_document.repo_statement.json
-}
-
-data "aws_iam_policy_document" "repo_statement" {
-  statement {
-    sid    = "new policy"
-    effect = "Allow"
-
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${local.account_id}:root"]
-    }
-
-    actions = [
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:PutImage",
-      "ecr:InitiateLayerUpload",
-      "ecr:UploadLayerPart",
-      "ecr:CompleteLayerUpload",
-      "ecr:DescribeRepositories",
-      "ecr:GetRepositoryPolicy",
-      "ecr:ListImages",
-      "ecr:DeleteRepository",
-      "ecr:BatchDeleteImage",
-      "ecr:SetRepositoryPolicy",
-      "ecr:DeleteRepositoryPolicy",
-    ]
-  }
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+    {
+	Sid: "ecr_policy"
+	Effect: "Allow"
+	Principal: {
+	  "AWS": "arn:aws:iam::${local.account_id}:root"
+	}
+	Action: [
+	  "ecr:GetDownloadUrlForLayer",
+	  "ecr:BatchGetImage",
+	  "ecr:BatchCheckLayerAvailability",
+	  "ecr:PutImage",
+	  "ecr:InitiateLayerUpload",
+	  "ecr:UploadLayerPart",
+	  "ecr:CompleteLayerUpload",
+	  "ecr:DescribeRepositories",
+	  "ecr:GetRepositoryPolicy",
+	  "ecr:ListImages",
+	  "ecr:DeleteRepository",
+	  "ecr:BatchDeleteImage",
+	  "ecr:SetRepositoryPolicy",
+	  "ecr:DeleteRepositoryPolicy",
+	  "ecr:ReplicateImage",
+	]
+    },
+    {
+      Sid: "ecr_policy_lamda",
+      Effect: "Allow",
+      Action: [
+        "ecr:SetRepositoryPolicy",
+        "ecr:GetRepositoryPolicy"
+      ],
+      Resource: "arn:aws:ecr:us-west-1:863670398045:repository/hello"
+    },
+    ],
+  })
 }
 

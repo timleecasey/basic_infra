@@ -58,6 +58,7 @@ resource "aws_lambda_function" "function_def" {
   environment {
     variables = {
       GIN_MODE = "${var.gin_mode}"
+      APP_CH_LAMBDA = "true"
     }
   }
   lifecycle {

@@ -20,16 +20,6 @@ variable "env" {
     default = "prod"
 }
 
-variable "reg" {
-    type = string
-    default = "us-west-1"
-}
-
-variable "shreg" {
-    type = string
-    default = "usw1"
-}
-
 variable "tag" {
     type = string
     default = "chapi"
