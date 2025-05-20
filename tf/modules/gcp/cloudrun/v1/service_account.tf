@@ -1,5 +1,6 @@
-resource "google_service_account" "this" {
-  account_id   = var.account_id
+
+resource "google_service_account" "sa" {
+  account_id   = "${var.env}-${var.tag}-sa"
   display_name = local.service_account_name
-  project      = var.project
+  project      = var.project_id
 }

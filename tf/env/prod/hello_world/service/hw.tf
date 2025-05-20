@@ -1,10 +1,37 @@
 
-module "hw_gcp" {
-  source = "../../../../modules/gcp/cloudrun/v1"
-  env = "${var.env}"
-  tag = "${var.tag}"
-  project = "tlc-demo-gcp"
-  project_id = "859479185776"
-  service_name = "hw"
-  account = "abc"
+
+
+module "dme" {
+  source               = "../../../../modules/gcp/cloudrun/v1"
+  tag                  = "dme"
+  env                  = var.env
+  project_id           = var.project_id
+  region               = var.region
+
+  env_vars = {
+    BUCKET_NAME       = var.bucket_name
+    DB_CONNECTION_URI = var.db_connection
+  }
+
+  ingress              = "INGRESS_TRAFFIC_INTERNAL_ONLY"
+  allow_unauthenticated = false
+
+  invoker_principals   = [
+    "serviceAccount:${module.proxy.sa_email}"
+  ]
+}
+
+module "proxy" {
+  source               = "../../../../modules/gcp/cloudrun/v1"
+  tag                 = "proxy"
+  env          = var.env
+  project_id           = var.project_id
+  region               = var.region
+
+  env_vars = {
+    DME_URL = module.dme.url
+  }
+
+  ingress              = "INGRESS_TRAFFIC_ALL"
+  allow_unauthenticated = true
 }

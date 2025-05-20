@@ -3,7 +3,15 @@ terraform {
     google = {
       source  = "hashicorp/google"
       version = ">= 4.0"
+      project = var.project_id
+      region  = var.region
+    },
+    google-beta = {
+      source = "hashicorp/google-beta"
+      project = var.project_id
+      region  = var.region
     }
+
   }
 
   backend "gcs" {
@@ -14,8 +22,10 @@ terraform {
 
 }
 
-provider "google" {
-  project = var.project
-  region  = var.region
+variable "bucket_name"    {
+  type = string
+}
+variable "db_connection"  {
+  type = string
 }
 

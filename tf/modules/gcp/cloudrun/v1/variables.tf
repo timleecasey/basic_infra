@@ -1,5 +1,5 @@
 variable "project_id" {
-  description = "GCP project to deploy into"
+  description = "GCP project id to deploy into"
   type        = string
 }
 
@@ -9,47 +9,18 @@ variable "region" {
   default     = "us-central1"
 }
 
-variable "account" {
-  description = "Account for service."
-  type = string
-  required = true
-}
-
 variable "tag" {
   description = "Name for the Cloud Run service"
   type        = string
 }
 
 variable "env" {
-  description = "Deployment environment: dev or prod"
+  description = "Deployment environment: dev, demo or prod"
   type        = string
   validation {
     condition     = contains(["dev", "prod", "demo"], var.env)
     error_message = "environment must be either \"demo\", \"dev\" or \"prod\""
   }
-}
-
-variable "ingress" {
-  description = <<-EOT
-    Network ingress setting for Cloud Run.
-    Uses the Cloud Run annotation `run.googleapis.com/ingress`.
-    Valid values (per API): `"all"`, `"internal-only"`, `"internal-and-cloud-load-balancing"`.
-    See docs :contentReference[oaicite:0]{index=0}.
-  EOT
-  type = string
-  default = "all"
-}
-
-variable "allow_unauthenticated" {
-  description = "If true, grant `roles/run.invoker` to allUsers at the service level"
-  type        = bool
-  default     = false
-}
-
-
-variable "project" {
-  type        = string
-  description = "GCP project ID"
 }
 
 variable "labels" {
@@ -58,3 +29,45 @@ variable "labels" {
   default     = {}
   required = false
 }
+
+
+variable "env_vars" {
+  type        = map(string)
+  description = "Map of environment variables to set in the container."
+  default     = {}
+}
+
+variable "ingress" {
+  type        = string
+  description = <<-EOF
+    Ingress setting, one of:
+      - INGRESS_TRAFFIC_ALL
+      - INGRESS_TRAFFIC_INTERNAL_ONLY
+      - INGRESS_TRAFFIC_INTERNAL_AND_LB
+    EOF
+  default     = "INGRESS_TRAFFIC_ALL"
+  validation {
+    condition = contains(
+      ["INGRESS_TRAFFIC_ALL","INGRESS_TRAFFIC_INTERNAL_ONLY","INGRESS_TRAFFIC_INTERNAL_AND_LB"],
+      var.ingress
+    )
+    error_message = "ingress must be one of the three supported INGRESS_TRAFFIC_* values"
+  }
+}
+
+variable "allow_unauthenticated" {
+  type        = bool
+  description = "Whether to allow public (unauthenticated) access."
+  default     = false
+}
+
+variable "invoker_principals" {
+  type        = list(string)
+  description = <<-EOF
+    Additional IAM members to grant roles/run.invoker on this service,
+    e.g. ["serviceAccount:my-proxy-sa@…"].
+    Ignored if allow_unauthenticated = true.
+    EOF
+  default     = []
+}
+

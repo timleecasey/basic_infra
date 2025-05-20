@@ -1,38 +1,22 @@
-resource "google_cloud_run_service" "this" {
-  name     = var.name
-  project  = var.project
+
+resource "google_cloud_run_v2_service" "this" {
+  provider = google-beta
+  name     = "${var.env}-${var.region}-${var.tag}"
   location = var.region
+  project  = var.project_id
 
-  metadata {
-    annotations = {
-      # control network ingress
-      "run.googleapis.com/ingress" = var.ingress
-    }
-    labels = merge(
-      var.labels,
-      {
-        env     = var.env
-        project = var.project
-        service = var.service_name
-      }
-    )
-  }
-
+  labels = local.labels
 
   template {
-    spec {
-      service_account_name = var.service_account_email
+    service_account = google_service_account.sa.email
 
-      containers {
-        image = var.image
-
-        env {
-          name  = "ENV"
-          value = var.environment
-        }
-      }
+    containers {
+      image = local.container_image
+      env = local.env
     }
   }
+
+  ingress = var.ingress
 
   traffic {
     percent         = 100
@@ -40,12 +24,18 @@ resource "google_cloud_run_service" "this" {
   }
 }
 
-resource "google_cloud_run_service_iam_member" "unauth" {
-  count   = var.allow_unauthenticated ? 1 : 0
-  project = var.project
-  location = var.region
-  service = google_cloud_run_service.this.name
+# Grant invoker rights
+resource "google_cloud_run_v2_service_iam_member" "invoker" {
+  for_each = toset(
+    var.allow_unauthenticated
+    ? ["allUsers"]
+    : var.invoker_principals
+  )
 
-  role   = "roles/run.invoker"
-  member = "allUsers"
+  provider = google-beta
+  service  = google_cloud_run_v2_service.this.name
+  location = google_cloud_run_v2_service.this.location
+  project  = google_cloud_run_v2_service.this.project
+  role     = "roles/run.invoker"
+  member   = each.value
 }
