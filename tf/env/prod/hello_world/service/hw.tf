@@ -1,9 +1,9 @@
 
 
 
-module "dme" {
+module "hw" {
   source               = "../../../../modules/gcp/cloudrun/v1"
-  tag                  = "dme"
+  tag                  = var.tag
   env                  = var.env
   project_id           = var.project_id
   region               = var.region
@@ -23,13 +23,13 @@ module "dme" {
 
 module "proxy" {
   source               = "../../../../modules/gcp/cloudrun/v1"
-  tag                 = "proxy"
-  env          = var.env
+  tag                  = "proxy"
+  env                  = var.env
   project_id           = var.project_id
   region               = var.region
 
   env_vars = {
-    DME_URL = module.dme.url
+    DME_URL = module.hw.url
   }
 
   ingress              = "INGRESS_TRAFFIC_ALL"

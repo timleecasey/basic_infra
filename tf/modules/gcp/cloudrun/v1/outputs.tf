@@ -12,3 +12,8 @@ output "sa_email" {
   description = "The email of the SA for the service"
   value       = google_service_account.sa.email
 }
+
+output "repo_id" {
+  description = "Repository id"
+  value = google_artifact_registry_repository.this.repository_id
+}
