@@ -9,13 +9,14 @@ variable "region" {
   default     = "us-central1"
 }
 
-variable "service_name" {
-  description = "Name for the Cloud Run service"
-  type        = string
+variable "account" {
+  description = "Account for service."
+  type = string
+  required = true
 }
 
-variable "container_image" {
-  description = "Full URI of the Docker image (e.g. gcr.io/my-project/my-app:latest)"
+variable "tag" {
+  description = "Name for the Cloud Run service"
   type        = string
 }
 
@@ -23,8 +24,8 @@ variable "env" {
   description = "Deployment environment: dev or prod"
   type        = string
   validation {
-    condition     = contains(["dev", "prod"], var.env)
-    error_message = "environment must be either \"dev\" or \"prod\""
+    condition     = contains(["dev", "prod", "demo"], var.env)
+    error_message = "environment must be either \"demo\", \"dev\" or \"prod\""
   }
 }
 
@@ -49,27 +50,6 @@ variable "allow_unauthenticated" {
 variable "project" {
   type        = string
   description = "GCP project ID"
-}
-
-variable "name" {
-  type        = string
-  description = "Cloud Run service name"
-}
-
-variable "image" {
-  type        = string
-  description = "Docker image URI"
-}
-
-variable "environment" {
-  type        = string
-  description = "dev or prod"
-}
-
-
-variable "service_account_email" {
-  type        = string
-  description = "Email of the SA to run this service"
 }
 
 variable "labels" {
