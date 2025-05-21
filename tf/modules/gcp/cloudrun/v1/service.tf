@@ -4,28 +4,59 @@ resource "google_cloud_run_v2_service" "this" {
   name     = "${var.env}-${var.region}-${var.tag}"
   location = var.region
   project  = var.project_id
+  ingress = var.ingress
 
   labels = local.labels
 
   template {
+    scaling {
+      min_instance_count = 1
+      max_instance_count = 1
+    }
     service_account = google_service_account.sa.email
 
     containers {
+      name = "${var.env}-${var.region}-${var.tag}"
       image = local.container_image
-      env = local.env
+#      ports = var.ports
+
+      env {
+        name = "env"
+        value = var.env
+      }
+      liveness_probe {
+        http_get {
+          path = "/"
+        }
+      }
+
+      startup_probe {
+        initial_delay_seconds = 5
+        timeout_seconds = 5
+        period_seconds = 5
+        failure_threshold = 15
+        tcp_socket {
+          port = 8080
+        }
+      }
+
+      #      for k,v in local.full_env_list : env {
+#        name = k
+#        value = v
+#      }
+
+
+
     }
+
+
   }
 
-  ingress = var.ingress
-
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
 }
 
 # Grant invoker rights
 resource "google_cloud_run_v2_service_iam_member" "invoker" {
+  name = "${var.env}-${var.region}-${var.tag}-iam"
   for_each = toset(
     var.allow_unauthenticated
     ? ["allUsers"]
@@ -33,7 +64,6 @@ resource "google_cloud_run_v2_service_iam_member" "invoker" {
   )
 
   provider = google-beta
-  service  = google_cloud_run_v2_service.this.name
   location = google_cloud_run_v2_service.this.location
   project  = google_cloud_run_v2_service.this.project
   role     = "roles/run.invoker"

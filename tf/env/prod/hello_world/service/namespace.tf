@@ -18,10 +18,6 @@ variable "region" {
   type = string
 }
 
-variable "project" {
-  type = string
-}
-
 variable "company" {
   type = string
 }

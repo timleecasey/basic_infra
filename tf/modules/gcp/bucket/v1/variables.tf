@@ -11,13 +11,13 @@ variable group {
   required = true
 }
 
-variable "project" {
+variable "project_id" {
   description = "GCP project ID in which to create the bucket.  This is used to differentiate the name space of all buckets."
   type = string
   required = true
 
   validation {
-    condition     = length(var.project) > 0
+    condition     = length(var.project_id) > 0
     error_message = "A non‑empty project ID must be provided."
   }
 }
