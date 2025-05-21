@@ -7,6 +7,7 @@ module "hw" {
   env                  = var.env
   project_id           = var.project_id
   region               = var.region
+  port                 = "8080"
 
   env_vars = {
     BUCKET_NAME       = var.bucket_name
@@ -27,6 +28,7 @@ module "proxy" {
   env                  = var.env
   project_id           = var.project_id
   region               = var.region
+  port                = "443"
 
   env_vars = {
     DME_URL = module.hw.url

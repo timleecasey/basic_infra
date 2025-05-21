@@ -70,3 +70,8 @@ variable "invoker_principals" {
   default     = []
 }
 
+variable "port" {
+  type = string
+  description = "The exposed port."
+}
+

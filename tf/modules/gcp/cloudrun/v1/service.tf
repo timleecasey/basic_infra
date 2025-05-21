@@ -18,12 +18,15 @@ resource "google_cloud_run_v2_service" "this" {
     containers {
       name = "${var.env}-${var.region}-${var.tag}"
       image = local.container_image
-#      ports = var.ports
 
       env {
         name = "env"
         value = var.env
       }
+      ports {
+        container_port = var.port
+      }
+
       liveness_probe {
         http_get {
           path = "/"
