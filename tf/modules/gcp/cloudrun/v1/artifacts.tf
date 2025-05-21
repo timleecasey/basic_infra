@@ -22,7 +22,7 @@ resource "google_artifact_registry_repository" "this" {
       newer_than   = "7d"
     }
   }
-  
+
   cleanup_policies {
     id     = "keep-tagged-release"
     action = "KEEP"

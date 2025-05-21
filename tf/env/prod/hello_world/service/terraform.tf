@@ -3,23 +3,23 @@ terraform {
     google = {
       source  = "hashicorp/google"
       version = ">= 4.0"
-      project = var.project_id
-      region  = var.region
-    },
-    google-beta = {
-      source = "hashicorp/google-beta"
-      project = var.project_id
-      region  = var.region
     }
-
   }
 
   backend "gcs" {
-    bucket = "${var.company}-${var.env}-state"
-    key = "terraform/${var.env}/${var.region}${var.project}/${var.tag}"
-    region = "us-west-1"
+    bucket = "tlc-demo-state"
+    prefix = "terraform/demo/us-west-1/demo/hw"
   }
 
+}
+
+provider google {
+  project = var.project_id
+  region  = var.region
+}
+provider google-beta {
+  project = var.project_id
+  region  = var.region
 }
 
 variable "bucket_name"    {

@@ -27,7 +27,6 @@ variable "labels" {
   description = "Additional labels to apply to the bucket."
   type        = map(string)
   default     = {}
-  required = false
 }
 
 
