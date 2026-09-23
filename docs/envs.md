@@ -83,8 +83,8 @@ shreg             = "usw1"
 tag               = "process"
 vpc_cidr          = "10.40.0.0/16"
 image_tag         = "20260923-4"   # the tag last pushed and deployed
-bootstrap_company = "ai3d"
-bootstrap_user    = "tlc"
+bootstrap_company = "all"    # the root account: the first user, root
+bootstrap_user    = "root"
 ```
 
 **Deploy**:
@@ -133,7 +133,7 @@ place (nothing released, so `000001_init` is edited rather than migrated):
 4. Set `image_tag` in `terraform.tfvars`, remove the `deletion_protection` line,
    `terraform apply` (the plan shows only protection going back on).
 
-The service re-seeds its bootstrap tenant (`ai3d/tlc`, root) on the first cold
+The service re-seeds its bootstrap tenant (`all/root`, the root user) on the first cold
 start. Step 3's delete takes the final snapshot `prod-usw1-process-final`; that
 snapshot now exists (from the 2026-09-23 rebuild), so a further replace fails until
 it is deleted (`aws rds delete-db-snapshot --db-snapshot-identifier
