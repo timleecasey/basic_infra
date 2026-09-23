@@ -72,7 +72,7 @@ function URL. The function URL uses auth `NONE`; the service itself requires
 other AWS envs are still on 5.x.
 
 **Deployed**: function URL `https://sfvsmnuz54txdbdjchoo5pp7bq0ctirm.lambda-url.us-west-1.on.aws/`,
-running image tag `20260923-3`.
+running image tag `20260923-4`.
 
 **terraform.tfvars**:
 
@@ -82,7 +82,7 @@ reg               = "us-west-1"
 shreg             = "usw1"
 tag               = "process"
 vpc_cidr          = "10.40.0.0/16"
-image_tag         = "20260923-3"   # the tag last pushed and deployed
+image_tag         = "20260923-4"   # the tag last pushed and deployed
 bootstrap_company = "ai3d"
 bootstrap_user    = "tlc"
 ```
@@ -120,6 +120,24 @@ as already provisioned on restart), so set `PROCESS_KEY` to the new key for late
 
 **Deleting**: the DB has deletion protection and takes a final snapshot. Set
 `deletion_protection = false` on the `db` module and apply before a `terraform destroy`.
+
+**Rebuilding the DB (drops all data)** — used when the service's schema changes in
+place (nothing released, so `000001_init` is edited rather than migrated):
+
+1. Push the new image tag.
+2. Add `deletion_protection = false` to the `db` module in `db.tf`; `terraform apply`
+   (in-place).
+3. `terraform apply -replace=module.db.aws_db_instance.this -var image_tag=<new tag>` —
+   the DB replacement and the image roll must land in **one** apply: an old image
+   cold-starting against the fresh DB would install the old schema first.
+4. Set `image_tag` in `terraform.tfvars`, remove the `deletion_protection` line,
+   `terraform apply` (the plan shows only protection going back on).
+
+The service re-seeds its bootstrap tenant (`ai3d/tlc`, root) on the first cold
+start. Step 3's delete takes the final snapshot `prod-usw1-process-final`; that
+snapshot now exists (from the 2026-09-23 rebuild), so a further replace fails until
+it is deleted (`aws rds delete-db-snapshot --db-snapshot-identifier
+prod-usw1-process-final`) or kept under another name.
 
 ## prod/hello_world
 
