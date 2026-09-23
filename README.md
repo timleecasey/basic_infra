@@ -2,6 +2,9 @@
 
 A basic example of intrastructure.
 
+**Documentation: [docs/INDEX.md](docs/INDEX.md)** — layout and naming, module versioning, the
+module catalog, and how to run each env.
+
 tf: holds TF sources
   modules: holds the modules broken down by provider and module component within the provider and then versioned.
   env: holds the environment declarations, composed of modules
