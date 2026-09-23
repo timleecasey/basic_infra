@@ -14,6 +14,12 @@ terraform {
   }
 }
 
+# main (and later) modules take their provider from the env; the v1 module
+# above still carries its own.
+provider "aws" {
+  region = "us-west-1"
+}
+
 
 variable "env" {
     type = string
