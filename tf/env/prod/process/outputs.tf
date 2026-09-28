@@ -9,6 +9,16 @@ output "bootstrap_key" {
   sensitive   = true
 }
 
+output "backup_bucket" {
+  description = "Bucket holding the nightly <name>.sql.gz backups (90-day expiry)"
+  value       = module.backup_bucket.bucket
+}
+
+output "backup_function_name" {
+  description = "The backup Lambda; invoke it to take a backup now"
+  value       = module.backup.function_name
+}
+
 output "db_address" {
   description = "Hostname of the process database (inside the VPC)"
   value       = module.db.address

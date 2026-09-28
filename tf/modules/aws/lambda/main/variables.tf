@@ -81,6 +81,15 @@ variable "function_url_auth_type" {
   }
 }
 
+variable "policy_statements" {
+  description = "Extra permissions for the function's role, each an Allow of actions on resources."
+  type = list(object({
+    actions   = list(string)
+    resources = list(string)
+  }))
+  default = []
+}
+
 variable "log_retention_days" {
   description = "Days to keep the function's CloudWatch logs."
   type        = number

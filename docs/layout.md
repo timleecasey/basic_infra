@@ -5,7 +5,7 @@
 ```
 tf/
   modules/<provider>/<module>/<version>/   reusable building blocks
-    aws/  ecr, lambda, vpc, subnet, sg, rds, backend
+    aws/  ecr, lambda, vpc, vpc_endpoint, subnet, sg, rds, s3, schedule, backend
     gcp/  cloudrun, iap, bucket
   env/<env>/<unit>/                         one Terraform root per deployed unit
     prod/ecr, prod/chapi, prod/vpc, prod/process, prod/hello_world/{network,service}

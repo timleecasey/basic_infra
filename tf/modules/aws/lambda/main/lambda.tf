@@ -36,6 +36,20 @@ resource "aws_iam_role_policy_attachment" "function_logs" {
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 
+resource "aws_iam_role_policy" "extra" {
+  count = length(var.policy_statements) > 0 ? 1 : 0
+  name  = "extra"
+  role  = aws_iam_role.lambda_role.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [for s in var.policy_statements : {
+      Effect   = "Allow"
+      Action   = s.actions
+      Resource = s.resources
+    }]
+  })
+}
+
 # A VPC-attached function needs to manage its network interfaces.
 resource "aws_iam_role_policy_attachment" "vpc_access" {
   count      = local.in_vpc ? 1 : 0
@@ -76,6 +90,7 @@ resource "aws_lambda_function" "function_def" {
     aws_cloudwatch_log_group.function,
     aws_iam_role_policy_attachment.function_logs,
     aws_iam_role_policy_attachment.vpc_access,
+    aws_iam_role_policy.extra,
   ]
 }
 

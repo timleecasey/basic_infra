@@ -30,6 +30,10 @@ variable "image_tag" {
   type = string
 }
 
+variable "backup_image_tag" {
+  type = string
+}
+
 variable "bootstrap_company" {
   type = string
 }
