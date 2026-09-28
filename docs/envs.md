@@ -83,7 +83,8 @@ it twice). Restore: the cnc doc `tasks/process-v2/api/process-api.md` §"Backups
 other AWS envs are still on 5.x.
 
 **Deployed**: function URL `https://sfvsmnuz54txdbdjchoo5pp7bq0ctirm.lambda-url.us-west-1.on.aws/`,
-running image tag `20260923-4`.
+running image tag `20260923-4`. Backups: `l-prod-process-backup` on `process-backup` tag
+`20260927-1`, first object `process-20260928T015049Z.sql.gz` (2026-09-27).
 
 **terraform.tfvars**:
 
